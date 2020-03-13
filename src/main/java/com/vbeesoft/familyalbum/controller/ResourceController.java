@@ -3,15 +3,12 @@ package com.vbeesoft.familyalbum.controller;
 import com.vbeesoft.familyalbum.common.StringUtils;
 import com.vbeesoft.familyalbum.common.date.DateTimeUtil;
 import com.vbeesoft.familyalbum.common.json.Json;
-import com.vbeesoft.familyalbum.common.video.VideoUtils;
 import com.vbeesoft.familyalbum.core.BaseCode;
 import com.vbeesoft.familyalbum.model.AlbumBean;
 import com.vbeesoft.familyalbum.model.RecycleBinBean;
 import com.vbeesoft.familyalbum.model.ResultBean;
 import com.vbeesoft.familyalbum.model.VideoSnapshootBean;
 import com.vbeesoft.familyalbum.service.ResourceService;
-import org.bytedeco.javacv.FrameGrabber;
-import org.eclipse.jetty.util.log.Log;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -115,9 +112,9 @@ public class ResourceController {
     private String getVideoSnap(String file) {
         String rtn = file;
         if (file.toLowerCase().endsWith(".mp4")) {
-            VideoSnapshootBean videoSnapshootBean = resourceService.video_snap(file);
+            VideoSnapshootBean videoSnapshootBean = resourceService.makeVideoSnap(file);
             LOG.info("getVideoSnap {}", videoSnapshootBean);
-            if (videoSnapshootBean == null||StringUtils.isEmpty(videoSnapshootBean.getSnapUrl())) {
+            if (videoSnapshootBean == null || StringUtils.isEmpty(videoSnapshootBean.getSnapUrl())) {
                 return file;
             }
             return videoSnapshootBean.getSnapUrl();
@@ -136,18 +133,22 @@ public class ResourceController {
     @RequestMapping("/video_snap.php")
     public VideoSnapshootBean video_snap(String filePath) {
         LOG.info("video_snap filePath:{} ", filePath);
-        VideoSnapshootBean result = resourceService.video_snap(filePath);
+        VideoSnapshootBean result = resourceService.makeVideoSnap(filePath);
         return result;
     }
 
     private static void scanFile(File file, Set<String> files) {
         File[] all = file.listFiles();
-
+        String absolutePath = "";
         for (File f : all) {
             if (f.isDirectory()) {    //若是目录，则递归打印该目录下的文件
                 scanFile(f, files);
             }
             if (f.isFile() && !f.isHidden()) {
+                absolutePath = f.getAbsolutePath();
+                if (absolutePath.endsWith("thumb.png")) {
+                    continue;
+                }
                 files.add(f.getAbsolutePath());
             }
         }

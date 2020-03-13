@@ -22,7 +22,7 @@ public class ResourceService {
 
     private ValueOperations<String, String> opsForValue;
 
-    public VideoSnapshootBean video_snap(String filePath) {
+    public VideoSnapshootBean makeVideoSnap(String filePath) {
         LOG.info("video_snap filePath:{} " , filePath);
         VideoSnapshootBean result = new VideoSnapshootBean();
         if (StringUtils.isEmpty(filePath)) {
