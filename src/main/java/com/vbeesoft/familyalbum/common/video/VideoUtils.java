@@ -98,7 +98,10 @@ public class VideoUtils {
             newW = (int) (w * rate);
             newH = (int) (h * rate);
         }
+
         LOG.info("doExecuteFrame w:{} * h:{}", newW, newH);
+        newW = newW <= 0 ? w : newW;
+        newH = newH <= 0 ? h : newH;
 
         Image image = bi.getScaledInstance(newW, newH, Image.SCALE_DEFAULT);
         BufferedImage smallBi = toBufferedImage(image);
@@ -177,6 +180,6 @@ public class VideoUtils {
             newW = (int) (w * rate);
             newH = (int) (h * rate);
         }
-        System.out.println("args = " + newW +", " + newH);
+        System.out.println("args = " + newW + ", " + newH);
     }
 }
