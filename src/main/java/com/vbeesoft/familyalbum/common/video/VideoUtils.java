@@ -1,9 +1,12 @@
 package com.vbeesoft.familyalbum.common.video;
 
+import com.vbeesoft.familyalbum.controller.RegisterController;
 import org.bytedeco.javacv.FFmpegFrameGrabber;
 import org.bytedeco.javacv.Frame;
 import org.bytedeco.javacv.FrameGrabber;
 import org.bytedeco.javacv.Java2DFrameConverter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -17,6 +20,8 @@ import java.util.UUID;
  * 截取视频第N帧的图片
  */
 public class VideoUtils {
+    private static final Logger LOG = LoggerFactory.getLogger(VideoUtils.class);
+
     /**
      * 截取视频第六帧的图片
      *
@@ -93,6 +98,7 @@ public class VideoUtils {
             newW = (int) (w * rate);
             newH = (int) (h * rate);
         }
+        LOG.info("doExecuteFrame w:{} * h:{}", newW, newH);
 
         Image image = bi.getScaledInstance(newW, newH, Image.SCALE_DEFAULT);
         BufferedImage smallBi = toBufferedImage(image);
