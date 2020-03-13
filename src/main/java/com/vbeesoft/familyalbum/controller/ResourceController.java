@@ -143,6 +143,7 @@ public class ResourceController {
                 LOG.error("get video image error");
                 result.setCode(10000);
                 result.setMessage("计算快照出错");
+                return result;
             }
         }
 
