@@ -117,7 +117,7 @@ public class ResourceController {
         if (file.toLowerCase().endsWith(".mp4")) {
             VideoSnapshootBean videoSnapshootBean = resourceService.video_snap(file);
             LOG.info("getVideoSnap {}", videoSnapshootBean);
-            if (videoSnapshootBean == null) {
+            if (videoSnapshootBean == null||StringUtils.isEmpty(videoSnapshootBean.getSnapUrl())) {
                 return file;
             }
             return videoSnapshootBean.getSnapUrl();
