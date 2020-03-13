@@ -9,6 +9,7 @@ import com.vbeesoft.familyalbum.model.AlbumBean;
 import com.vbeesoft.familyalbum.model.RecycleBinBean;
 import com.vbeesoft.familyalbum.model.ResultBean;
 import com.vbeesoft.familyalbum.model.VideoSnapshootBean;
+import com.vbeesoft.familyalbum.service.ResourceService;
 import org.bytedeco.javacv.FrameGrabber;
 import org.eclipse.jetty.util.log.Log;
 import org.slf4j.Logger;
@@ -29,6 +30,9 @@ public class ResourceController {
 
     @Autowired
     private RedisTemplate<String, String> stringTemplate;
+
+    @Autowired
+    private ResourceService resourceService;
 
     private ValueOperations<String, String> opsForValue;
 
@@ -87,7 +91,11 @@ public class ResourceController {
                 urls = new ArrayList<>();
             }
             f = f.replace("/Users/jamesding", "");
+            LOG.info("f {}", f);
+            f = getVideoSnap(f);
+            LOG.info("f {}", f);
             f = f.replace("/www/wwwroot/files", "/data");
+            LOG.info("f {}", f);
             urls.add(f);
             bean.setImgUrls(urls);
             map.put(dateStr, bean);
@@ -104,6 +112,19 @@ public class ResourceController {
         return result;
     }
 
+    private String getVideoSnap(String file) {
+        String rtn = file;
+        if (file.toLowerCase().endsWith(".mp4")) {
+            VideoSnapshootBean videoSnapshootBean = resourceService.video_snap(file);
+            LOG.info("getVideoSnap {}", videoSnapshootBean);
+            if (videoSnapshootBean == null) {
+                return file;
+            }
+            return videoSnapshootBean.getSnapUrl();
+        }
+        return rtn;
+    }
+
     private String getUserResPath(String userID, String res_root_path) {
         return res_root_path + userID;
     }
@@ -114,46 +135,8 @@ public class ResourceController {
 
     @RequestMapping("/video_snap.php")
     public VideoSnapshootBean video_snap(String filePath) {
-        LOG.info("video_snap filePath:{} " , filePath);
-        VideoSnapshootBean result = new VideoSnapshootBean();
-        if (StringUtils.isEmpty(filePath)) {
-            result.setCode(10000);
-            result.setMessage("参数为空");
-            return result;
-        }
-
-        filePath = res_root_path + filePath;
-        LOG.info("filePath:{}", filePath);
-        opsForValue = stringTemplate.opsForValue();
-        String redisKey = filePath;
-        String json = opsForValue.get(redisKey);
-
-//        if (json != null) {
-//            result.setSnapUrl(json);
-//            return result;
-//        }
-
-        String png = filePath + ".png";
-        File file = new File(png);
-        if (file == null || !file.exists()) {
-            result.setCache(VideoSnapshootBean.calculate_now);
-            try {
-                png = VideoUtils.videoImage(filePath, 6);
-            } catch (Exception e) {
-                LOG.error("get video image error");
-                result.setCode(10000);
-                result.setMessage("计算快照出错");
-                return result;
-            }
-        }
-
-        if (file.exists() && !file.isDirectory()) {
-            result.setSnapUrl(png);
-            return result;
-        }
-
-        opsForValue.set(redisKey, png);
-        LOG.info("video_snap result:{} ", result);
+        LOG.info("video_snap filePath:{} ", filePath);
+        VideoSnapshootBean result = resourceService.video_snap(filePath);
         return result;
     }
 
