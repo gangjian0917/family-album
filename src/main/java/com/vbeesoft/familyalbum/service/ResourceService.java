@@ -31,8 +31,6 @@ public class ResourceService {
             return result;
         }
 
-        filePath = ResourceController.res_root_path + filePath;
-        LOG.info("filePath:{}", filePath);
         opsForValue = stringTemplate.opsForValue();
         String redisKey = filePath;
         String json = opsForValue.get(redisKey);
