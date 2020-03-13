@@ -163,7 +163,20 @@ public class VideoUtils {
 
 
     public static void main(String[] args) throws FrameGrabber.Exception {
-        String png = VideoUtils.makeVideoImage("/Users/jamesding/妈妈的手机/Camera/0815fbf795094acf18588debccc6eaca.mp4", 6);
-        System.out.println("args = " + png);
+//        String png = VideoUtils.makeVideoImage("/Users/jamesding/妈妈的手机/Camera/0815fbf795094acf18588debccc6eaca.mp4", 6);
+//        System.out.println("args = " + png);
+
+        int h = 1000;
+        int w = 1000;
+        int m = w > h ? w : h;
+
+        int newW = w;
+        int newH = h;
+        if (m > 128) {
+            double rate = 128 / m;
+            newW = (int) (w * rate);
+            newH = (int) (h * rate);
+        }
+        System.out.println("args = " + newW +", " + newH);
     }
 }
