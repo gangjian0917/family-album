@@ -88,8 +88,8 @@ public class VideoUtils {
 
         int newW = w;
         int newH = h;
-        if (m > 256) {
-            double rate = 256.0 / m;
+        if (m > 128) {
+            double rate = 128 / m;
             newW = (int) (w * rate);
             newH = (int) (h * rate);
         }
