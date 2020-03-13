@@ -63,9 +63,11 @@ public class ResourceController {
 
         if (file == null || !file.exists()) {
             result.setResult_code(BaseCode.account_already_exists_error);
+            return result;
         }
         if (!file.isDirectory()) {
             result.setResult_code(BaseCode.account_already_exists_error);
+            return result;
         }
 
         Set<String> files = new HashSet<>();
@@ -83,16 +85,18 @@ public class ResourceController {
                 bean = new ResultBean();
                 bean.setDate(dateStr);
             }
+
             List<String> urls = bean.getImgUrls();
             if (urls == null) {
                 urls = new ArrayList<>();
             }
+
             f = f.replace("/Users/jamesding", "");
-            LOG.info("f {}", f);
+            LOG.info("f1 {}", f);
             f = getVideoSnap(f);
-            LOG.info("f {}", f);
+            LOG.info("f2 {}", f);
             f = f.replace("/www/wwwroot/files", "/data");
-            LOG.info("f {}", f);
+            LOG.info("f3 {}", f);
             urls.add(f);
             bean.setImgUrls(urls);
             map.put(dateStr, bean);

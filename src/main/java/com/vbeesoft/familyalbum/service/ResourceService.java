@@ -48,8 +48,9 @@ public class ResourceService {
             result.setCache(VideoSnapshootBean.calculate_now);
             try {
                 png = VideoUtils.videoImage(filePath, 6);
+                result.setSnapUrl(png);
             } catch (Exception e) {
-                LOG.error("get video image error");
+                LOG.error("get video image error", e);
                 result.setCode(10000);
                 result.setMessage("计算快照出错");
                 return result;

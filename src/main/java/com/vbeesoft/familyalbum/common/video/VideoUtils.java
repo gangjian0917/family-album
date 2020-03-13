@@ -56,7 +56,7 @@ public class VideoUtils {
      * @return 图片的相对路径 例：pic/1.png
      */
     private static String getPngPath(String filePath) {
-        return new File(filePath).getAbsoluteFile() + "thumb.png";
+        return new File(filePath).getAbsoluteFile() + ".png";
     }
 
 
