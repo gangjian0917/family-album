@@ -2,7 +2,6 @@ package com.vbeesoft.familyalbum.service;
 
 import com.vbeesoft.familyalbum.common.StringUtils;
 import com.vbeesoft.familyalbum.common.video.VideoUtils;
-import com.vbeesoft.familyalbum.controller.ResourceController;
 import com.vbeesoft.familyalbum.model.VideoSnapshootBean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,6 +11,7 @@ import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
+import java.util.concurrent.TimeUnit;
 
 @Service
 public class ResourceService {
@@ -23,7 +23,7 @@ public class ResourceService {
     private ValueOperations<String, String> opsForValue;
 
     public VideoSnapshootBean makeVideoSnap(String filePath) {
-        LOG.info("video_snap filePath:{} " , filePath);
+        LOG.info("video_snap filePath:{} ", filePath);
         VideoSnapshootBean result = new VideoSnapshootBean();
         if (StringUtils.isEmpty(filePath)) {
             result.setCode(10000);
@@ -32,20 +32,21 @@ public class ResourceService {
         }
 
         opsForValue = stringTemplate.opsForValue();
+
         String redisKey = filePath;
         String json = opsForValue.get(redisKey);
-
-//        if (json != null) {
-//            result.setSnapUrl(json);
-//            return result;
-//        }
+        if (json != null) {
+            result.setSnapUrl(json);
+            result.setCache(VideoSnapshootBean.in_cache);
+            return result;
+        }
 
         String png = filePath + ".png";
         File file = new File(png);
         if (file == null || !file.exists()) {
             result.setCache(VideoSnapshootBean.calculate_now);
             try {
-                png = VideoUtils.videoImage(filePath, 6);
+                png = VideoUtils.makeVideoImage(filePath, 6);
                 result.setSnapUrl(png);
             } catch (Exception e) {
                 LOG.error("get video image error", e);
@@ -60,7 +61,7 @@ public class ResourceService {
             return result;
         }
 
-        opsForValue.set(redisKey, png);
+        opsForValue.set(redisKey, png, 15, TimeUnit.MINUTES);
         LOG.info("video_snap result:{} ", result);
         return result;
     }

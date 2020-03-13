@@ -11,7 +11,6 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.UUID;
 
 /**
@@ -25,7 +24,7 @@ public class VideoUtils {
      * @return 图片的相对路径 例：pic/1.png
      * @throws FrameGrabber.Exception
      */
-    public static String videoImage(String videoFilePath, int frame) throws FrameGrabber.Exception {
+    public static String makeVideoImage(String videoFilePath, int frame) throws FrameGrabber.Exception {
         String pngPath = "";
         FFmpegFrameGrabber ff = FFmpegFrameGrabber.createDefault(videoFilePath);
 
@@ -83,7 +82,19 @@ public class VideoUtils {
         }
         Java2DFrameConverter converter = new Java2DFrameConverter();
         BufferedImage bi = converter.getBufferedImage(f);
-        Image image = bi.getScaledInstance(256, 256, Image.SCALE_DEFAULT);
+        int h = bi.getHeight();
+        int w = bi.getWidth();
+        int m = w > h ? w : h;
+
+        int newW = w;
+        int newH = h;
+        if (m > 256) {
+            double rate = 256.0 / m;
+            newW = (int) (w * rate);
+            newH = (int) (h * rate);
+        }
+
+        Image image = bi.getScaledInstance(newW, newH, Image.SCALE_DEFAULT);
         BufferedImage smallBi = toBufferedImage(image);
         File output = new File(targerFilePath);
         try {
@@ -146,7 +157,7 @@ public class VideoUtils {
 
 
     public static void main(String[] args) throws FrameGrabber.Exception {
-        String png = VideoUtils.videoImage("/Users/jamesding/妈妈的手机/Camera/0815fbf795094acf18588debccc6eaca.mp4", 6);
+        String png = VideoUtils.makeVideoImage("/Users/jamesding/妈妈的手机/Camera/0815fbf795094acf18588debccc6eaca.mp4", 6);
         System.out.println("args = " + png);
     }
 }
