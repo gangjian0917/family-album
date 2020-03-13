@@ -114,7 +114,7 @@ public class ResourceController {
 
     @RequestMapping("/video_snap.php")
     public VideoSnapshootBean video_snap(String filePath) {
-        LOG.info("video_snap filePath:{} " + filePath);
+        LOG.info("video_snap filePath:{} " , filePath);
         VideoSnapshootBean result = new VideoSnapshootBean();
         if (StringUtils.isEmpty(filePath)) {
             result.setCode(10000);
@@ -128,10 +128,10 @@ public class ResourceController {
         String redisKey = filePath;
         String json = opsForValue.get(redisKey);
 
-        if (json != null) {
-            result.setSnapUrl(json);
-            return result;
-        }
+//        if (json != null) {
+//            result.setSnapUrl(json);
+//            return result;
+//        }
 
         String png = filePath + ".png";
         File file = new File(png);
