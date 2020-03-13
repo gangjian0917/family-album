@@ -146,13 +146,14 @@ public class ResourceController {
             }
             if (f.isFile() && !f.isHidden()) {
                 absolutePath = f.getAbsolutePath();
-                if (absolutePath.endsWith("thumb.png")) {
+                if (absolutePath.endsWith(".png")) {
                     continue;
                 }
                 files.add(f.getAbsolutePath());
             }
         }
     }
+
 
     @RequestMapping("/recycle_bin.php")
     public RecycleBinBean recycleBin(String userID) {
@@ -191,11 +192,7 @@ public class ResourceController {
     }
 
     public static void main(String[] args) {
-        File file = new File("/Users/jamesding/data/cloudRes/1");
-        Set<String> files = new HashSet<>();
-        scanFile(file, files);
-        for (String f : files) {
-            System.out.println("f = " + f);
-        }
+        String file = new String("/Users/jamesding/data/cloudRes/1.png");
+        System.out.println("args = " + file.endsWith(".png"));
     }
 }
